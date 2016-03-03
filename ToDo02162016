@@ -1,0 +1,18 @@
+\begin{document}
+
+Need to finish generate output of player shares and valuations as well as number of iterations and values of util_coefficients and bias
+
+$ keep track of difference between valuations (error? and graph versus number of iterations to get an idea of the realtionship between
+	simulation size and welfare of the protocol)
+
+$ use quadratic value functions? with linear functions, an optimal allocation would need to be the entire cake for all agents, need to make sure quadratic values satisfy assumptions made in the text. But assuming a quadratic would allow for the problem to be modeled in a more
+realistic fashion because (assuming a concave value function) there is a global maxima in the unit interval that represents the point where
+the agent recieves the amount of cake they most want (not too little or too much). 
+
+
+
+
+
+
+
+\end{document}
