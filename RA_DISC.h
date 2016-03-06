@@ -12,52 +12,64 @@
 #include <random>
 #include <algorithm>
 
-
+class Agent;
 
 class Utils
 {
 public:
-	std::vector<double> GeneticAlgorithm(std::vector<double> ancestor, double fitness)
+	std::vector<int> GeneticAlgorithm(std::vector<double> ancestor, double fitness)
 	{
 		int max_runs = pow(2, ancestor.size());
 		int run = 0;
 
+		std::vector<int> c;
+		c.resize(ancestor.size());
+
 		int selectedI = 0;
 
-		std::vector<std::vector<double>> population = generatePopulation(100, ancestor);
+		std::vector<std::vector<int>> population = generatePopulation(100, ancestor.size());
 
 		double min_fitness = 1.0;
 
 		for (int i = 0; i < population.size(); i++)
 		{
-			if (fitnessFunction(population[i], fitness) < min_fitness)
+			if (fitnessFunction(population[i],ancestor, fitness) < min_fitness)
 			{
-				min_fitness = fitnessFunction(population[i], fitness);
+				min_fitness = fitnessFunction(population[i],ancestor, fitness);
 				selectedI = i;
 			}
 		}
 
 
 		return population[selectedI];
+		//return c;
 	}
 
-	std::vector<std::vector<double>> generatePopulation(int size, std::vector<double> ancestor)
+	std::vector<std::vector<int>> generatePopulation(int size, int row_size)
 	{
-		std::vector<std::vector<double>> apopulation;
+		std::vector<std::vector<int>> apopulation;
+
+		std::vector<int> iVec;
+
+		for(int i = 0; i < row_size; i++)
+		{
+			iVec.push_back(i);
+		}
+
 		for (int i = 0; i < size; i++)
 		{
-			apopulation.push_back(random_selection(ancestor));
+			apopulation.push_back(random_selection(iVec));
 		}
 
 		return apopulation;
 
 	}
 
-	std::vector<double> random_selection(std::vector<double> population)
+	std::vector<int> random_selection(std::vector<int> population)
 	{
-		std::vector<double> copy = population;
+		std::vector<int> copy = population;
 
-		std::vector<double> neo;
+		std::vector<int> neo;
 
 		int rLength = rand() % (population.size() + 1);
 
@@ -94,7 +106,7 @@ public:
 	}*/
 
 
-	double fitnessFunction(std::vector<double> formula, double alpha)
+	double fitnessFunction(std::vector<int> formula,std::vector<double> ancestor, double alpha)
 	{
 
 		double fitness = 1;
@@ -103,8 +115,11 @@ public:
 
 		for (int i = 0; i <formula.size(); i++)
 		{
-			sum += formula[i];
+			sum += ancestor[formula[i]];
+			//std::cout<<ancestor[formula[i]]<<" ";
+			//std::cout<<formula[i]<<" ";
 		}
+		//std::cout<<std::endl;
 
 		if (sum >= 0)
 		{
@@ -132,6 +147,7 @@ class Agent
 {
 private:
 	std::vector<double> valueDist;
+	std::vector<int> cuts;
 public:
 
 	std::vector<int> identify_piece(std::vector<double> alpha)
@@ -197,7 +213,7 @@ public:
 		return valueDist[S];
 	};
 
-	std::vector<double> cut(double alpha)
+	std::vector<int> cut(double alpha)
 	{
 
 		int start = 0;
@@ -221,7 +237,7 @@ public:
 		mt.seed(seed);
 		std::uniform_real_distribution<double> intDist(0, valueDist.size());
 
-		std::vector<double> cuts;
+		std::vector<int> cuts;
 
 		Utils alg;
 
@@ -239,9 +255,48 @@ class Protocol
 public:
 	void cut_and_choose(Agent a, Agent b)
 	{
-		std::vector<double> cuts;
+		std::vector<int> cake;
 
-		cuts = a.cut(.5);
+		cake.resize(a.get_value_dist().size());
+
+		std::vector<double> a_value = a.get_value_dist();
+		std::vector<double> b_value = b.get_value_dist();
+
+		std::vector<int> cuts;
+
+		cuts = a.cut(.5); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
+
+		double asum = 0;
+		double bsum = 0;
+
+		for(int i = 0; i <cuts.size(); i++)
+		{
+			asum += a_value[cuts[i]];
+			bsum += b_value[cuts[i]];
+		}
+
+		std::cout<<"Player 1 values piece 1 as = "<<asum<<std::endl;
+
+		if( (1-bsum) > bsum)
+		{
+			std::cout<<"Player 2 chooses piece 2 , value = "<< (1-bsum)<<std::endl;
+			std::cout<<"Player 1 is left with piece 1, value = "<<(asum)<<std::endl; 
+		}
+		else if( (1-bsum) < bsum)
+		{
+			std::cout<<"Player 2 chooses piece 1, value = "<<bsum<<std::endl;
+			std::cout<<"Player 1 is left with piece 2, value ="<<(1 - asum)<<std::endl;
+		}
+		else{
+			//std::cout<<"Player 2 values piece 1 and piece 2 equally, chooses piece 1, value = "<<bsum<<std::endl;
+			//std::cout<<"Player 1 is left with piece 2, value = "<<asum<<std::endl;
+			std::cout<<"Player 2 values each piece equally "<<bsum<<std::endl;
+			std::cout<<"Player 1 values piece 1 as "<<asum<<", and piece 2 as "<<(1-asum)<<std::endl;
+		}
+
+
+
+
 
 	}
 

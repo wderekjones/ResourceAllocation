@@ -16,50 +16,46 @@ int main()
 	Agent a;
 
 	a.generateValueDist(6);
-	a.dumpValueDist();
+	//a.dumpValueDist();
 
-	std::vector<double> abc;
+	std::vector<int> abc;
 
 	std::vector<int> pI;
 
 
 	abc = a.cut(.5);
 
-	pI = a.identify_piece(abc);
 
-	pI = remove_duplicate(pI);
 
-	for(int i =0; i< pI.size(); i++)
-	{
-		std::cout<<pI[i]<<std::endl;
-	}
+	//for(int i = 0 ; i <abc.size(); i++)
+	//{
+	//	std::cout<<abc[i]<<" ";
+	//}
+	//std::cout<<std::endl;
 
-	std::cout << "solution size: " << abc.size() <<" " << pI.size()<< std::endl;
+	//pI = a.identify_piece(abc);
 
+	//pI = remove_duplicate(pI);
+
+	
 	double s = 0;
+	
+	std::vector<double> v = a.get_value_dist();
 
-
-	for (int i = 0; i< abc.size(); i++)
+	/*for (int i = 0; i< abc.size(); i++)
 	{
-		std::cout << "The agent chooses piece " << " of value: " << abc[i] <<" "<<std::endl;
-		s += abc[i];
+		std::cout << "The agent chooses piece " << abc[i] << " of value: " << v[abc[i]] <<" "<<std::endl;
+		s += v[abc[i]];
 	}
-	std::cout << "sum of the value is: " << s << std::endl;
-
-	abc.clear();
-
-	std::vector<double> bc;
-	bc = a.get_value_dist();
-
-	/*for(int i =0; i < abc.size(); i++)
-	{
-		std::cout<<abc[i]<<std::endl;
-	}*/
-
-	/*
-		Need to figure out which piece is which in order to identify and  remove those pieces from the resource
-
+	std::cout<<"sum(value): "<<s<<std::endl;
 	*/
+	Protocol p;
+
+	Agent b;
+	b.generateValueDist(6);
+	//b.dumpValueDist();
+
+	p.cut_and_choose(a,b);
 
 	return 0;
 
