@@ -27,7 +27,7 @@ public:
 
 		int selectedI = 0;
 
-		std::vector<std::vector<int>> population = generatePopulation(100, ancestor.size());
+		std::vector<std::vector<int>> population = generatePopulation(1000000, ancestor.size());
 
 		double min_fitness = 1.0;
 
@@ -42,7 +42,6 @@ public:
 
 
 		return population[selectedI];
-		//return c;
 	}
 
 	std::vector<std::vector<int>> generatePopulation(int size, int row_size)
@@ -116,16 +115,13 @@ public:
 		for (int i = 0; i <formula.size(); i++)
 		{
 			sum += ancestor[formula[i]];
-			//std::cout<<ancestor[formula[i]]<<" ";
-			//std::cout<<formula[i]<<" ";
 		}
-		//std::cout<<std::endl;
+		
 
 		if (sum >= 0)
 		{
 			fitness = std::abs(sum - alpha);
 		}
-		//std::cout<<"fitness = "<<fitness<<std::endl;
 
 		return fitness;
 	}
@@ -168,8 +164,6 @@ public:
 
 	void generateValueDist(int rSize)
 	{
-		//valueDist.clear();
-
 		std::mt19937 mt;
 		auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 		mt.seed(seed);
@@ -288,8 +282,6 @@ public:
 			std::cout<<"Player 1 is left with piece 2, value ="<<(1 - asum)<<std::endl;
 		}
 		else{
-			//std::cout<<"Player 2 values piece 1 and piece 2 equally, chooses piece 1, value = "<<bsum<<std::endl;
-			//std::cout<<"Player 1 is left with piece 2, value = "<<asum<<std::endl;
 			std::cout<<"Player 2 values each piece equally "<<bsum<<std::endl;
 			std::cout<<"Player 1 values piece 1 as "<<asum<<", and piece 2 as "<<(1-asum)<<std::endl;
 		}
