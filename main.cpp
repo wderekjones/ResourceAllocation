@@ -8,8 +8,6 @@ int main()
 	
 	Agent b;
 	b.generateValueDist(10);
-
-	std::vector<int> abc;
 	
 	Protocol p;
 
