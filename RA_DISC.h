@@ -144,22 +144,6 @@ private:
 	std::vector<int> cuts;
 public:
 
-	std::vector<int> identify_piece(std::vector<double> alpha)
-	{
-		std::vector<int> p_index;
-		for(int i = 0; i <valueDist.size(); i++)
-		{
-			for(int j = 0; j< alpha.size(); j++)
-			{
-				if(valueDist[i] == alpha[j])
-				{
-					p_index.push_back(i);
-				}
-			}
-		}
-		return p_index;
-	}
-
 	void generateValueDist(int rSize)
 	{
 		std::mt19937 mt;
