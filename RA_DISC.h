@@ -20,9 +20,6 @@ public:
 		int max_runs = pow(2, ancestor.size());
 		int run = 0;
 
-		std::vector<int> c;
-		c.resize(ancestor.size());
-
 		int selectedI = 0;
 
 		std::vector<std::vector<int>> population = generatePopulation(1000, ancestor.size());
@@ -68,7 +65,7 @@ public:
 
 		std::vector<int> neo;
 
-		int rLength = rand() % (population.size() + 1);
+		int rLength = rand() % (copy.size() + 1);
 
 		for (int i = 0; i <rLength; i++)
 		{
@@ -212,7 +209,7 @@ class Protocol
 {
 
 public:
-	void cut_and_choose(Agent a, Agent b)
+	void cut_and_choose(Agent a, Agent b, double alpha)
 	{
 		std::vector<int> cake;
 
@@ -223,7 +220,7 @@ public:
 
 		std::vector<int> cuts;
 
-		cuts = a.cut(.5); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
+		cuts = a.cut(alpha); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
 
 		double asum = 0;
 		double bsum = 0;
