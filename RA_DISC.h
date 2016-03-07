@@ -207,23 +207,6 @@ public:
 
 	std::vector<int> cut(double alpha)
 	{
-
-		int start = 0;
-		int end = 0;
-
-		/* 0 <= alpha <= 1
-		require player_i either to return the value x \in S = [s_1,s_2] such that vi([s1,x]) = alpha
-		(that is, the protocol asks p_i to cut - or make a marking - at a point x to produce (or mark)
-		a subpiece of value alpha), or to announce that this is impossible because no such x exists in S.
-		*/
-		/*
-		Solution idea: write a recursive function that enumerates all subsets of the value_distribution for
-		an agent and greedily try all of them. If no subsets of size k exist to solve the problem, call the function
-		again and find all subsets of size k = k + 1 as long as k < n else we have exhausted all possibilities.
-
-		Maybe use a genetic algorithm or A* search in the future?
-		*/
-
 		std::mt19937 mt;
 		auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 		mt.seed(seed);
