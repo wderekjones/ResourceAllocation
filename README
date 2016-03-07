@@ -1,0 +1,5 @@
+This is an implementation of Fair Division Protocols for various numbers of players
+
+As of now the n = 2 case of the cut and choose protocol is implemented. 
+
+Coming soon: Last Diminisher protocol for n players
