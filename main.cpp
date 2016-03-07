@@ -10,8 +10,6 @@ int main()
 	b.generateValueDist(10);
 
 	std::vector<int> abc;
-
-	abc = a.cut(.5);
 	
 	Protocol p;
 
