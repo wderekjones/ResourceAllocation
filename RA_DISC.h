@@ -4,13 +4,11 @@
 #define RA_DISC
 
 
-#include <stdio.h>
 #include <vector>
 #include <chrono>
 #include <cmath>
 #include <iostream>
 #include <random>
-#include <algorithm>
 
 class Agent;
 
@@ -27,7 +25,7 @@ public:
 
 		int selectedI = 0;
 
-		std::vector<std::vector<int>> population = generatePopulation(1000000, ancestor.size());
+		std::vector<std::vector<int>> population = generatePopulation(1000, ancestor.size());
 
 		double min_fitness = 1.0;
 
