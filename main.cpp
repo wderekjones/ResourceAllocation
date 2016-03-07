@@ -1,16 +1,6 @@
 
 #include "RA_DISC.H"
 
-
-template <typename T>
-std::vector<T> remove_duplicate(std::vector<T> vec)
-{
-	std::sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	return vec;
-}
-
-
 int main()
 {
 	Agent a;
