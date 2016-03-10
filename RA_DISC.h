@@ -9,32 +9,74 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include <algorithm>
+
+
+
 
 class Agent;
 
 class Utils
 {
 public:
-	std::vector<int> GeneticAlgorithm(std::vector<double> ancestor, double fitness)
+	std::vector<int> GeneticAlgorithm(std::vector<double> ancestor, double fitness, double epsilon)
 	{
-		int max_runs = pow(2, ancestor.size());
-		int run = 0;
+		int runs = 0;
 
 		int selectedI = 0;
 
-		std::vector<std::vector<int>> population = generatePopulation(1000, ancestor.size());
+		
 
+		std::vector<std::vector<int>> population = generatePopulation(1000, ancestor.size());
+		
 		double min_fitness = 1.0;
 
-		for (int i = 0; i < population.size(); i++)
-		{
-			if (fitnessFunction(population[i],ancestor, fitness) < min_fitness)
+
+		do{
+
+			std::vector<std::vector<int>> new_population;
+			for (int i = 0; i < population.size(); i++)
 			{
-				min_fitness = fitnessFunction(population[i],ancestor, fitness);
+
+				int p1 = 0;
+				int p2 = 0;
+
+				p1 = rand() % population.size();
+				p2 = rand() % population.size();
+
+				std::vector<int> mother = random_selection(population); //randomly select a member of the population
+				std::vector<int> father = random_selection(population); 
+				std::vector<int> child = reproduce(mother,father,ancestor);
+
+				// randomly determine whether or not to mutate the child
+				if( p1 > p2 )
+				{
+					child = mutate(child);
+				}
+				new_population.push_back(child);
+
+				
+				if (fitnessFunction(population[i],ancestor, fitness) < min_fitness)
+				{
+					min_fitness = fitnessFunction(population[i],ancestor, fitness);
+				}
+			}
+			population = new_population;
+
+			runs++;
+			
+		}while((min_fitness) > epsilon);
+		
+		for(int i = 0; i < population.size(); i++)
+		{
+			double cand_fitness = fitnessFunction(population[i],ancestor,fitness);
+			if(cand_fitness <= min_fitness)
+			{
+				min_fitness = cand_fitness;
 				selectedI = i;
+
 			}
 		}
-
 
 		return population[selectedI];
 	}
@@ -43,45 +85,68 @@ public:
 	{
 		std::vector<std::vector<int>> apopulation;
 
-		std::vector<int> iVec;
-
-		for(int i = 0; i < row_size; i++)
-		{
-			iVec.push_back(i);
-		}
-
 		for (int i = 0; i < size; i++)
 		{
-			apopulation.push_back(random_selection(iVec));
+			int rLength = 0;
+			rLength = rand() % row_size;
+			std::vector<int> iVec;
+
+			for(int j = 0; j < rLength; j++)
+			{
+				int r;
+				r = rand() % (row_size);
+				iVec.push_back(r);
+			}
+			
+			apopulation.push_back(iVec);
 		}
+
+		std::sort(apopulation.begin(),apopulation.end());
+		auto last = std::unique(apopulation.begin(),apopulation.end());
+		apopulation.erase(last,apopulation.end());
 
 		return apopulation;
 
 	}
 
-	std::vector<int> random_selection(std::vector<int> population)
+
+	std::vector<int> random_selection(std::vector<std::vector<int>> population)
 	{
-		std::vector<int> copy = population;
 
 		std::vector<int> neo;
 
-		int rLength = rand() % (copy.size() + 1);
+		int selectedI = 0;
 
-		for (int i = 0; i <rLength; i++)
-		{
-			int rI = rand() % copy.size();
-			neo.push_back(copy[rI]);
-			copy.erase(copy.begin() + rI);
-		}
+		selectedI = rand() % population.size();
+
+		neo = population[selectedI];
 
 		return neo;
 
 	}
 
-	/*std::vector<double> reproduce(std::vector<double> mother, std::vector<double> father)
+	std::vector<int> mutate(std::vector<int> member)
+	{
+		std::vector<int> mutant;
+		mutant.resize(member.size());
+
+		for(int i =0 ; i < member.size() ; i++)
+		{
+			int r_i = 0; 
+			r_i = rand() % (member.size());
+			mutant[i] = member[r_i];
+		}
+
+		return mutant;
+	}
+
+	std::vector<int> reproduce(std::vector<int> mother, std::vector<int> father, std::vector<double> ancestor)
 	{
 		int c;
 
+		std::vector<int> child;
+
+	
 		if (mother.size() > father.size())
 		{
 			c = rand() % father.size();
@@ -90,14 +155,17 @@ public:
 			c = rand() % mother.size();
 		}
 
-		std::vector<double> child;
 
-		child.insert(child.begin(), mother.begin(), mother.end() - c);
-		child.insert(child.end(), father.end() - c, father.end());
-
+		child.insert(child.end(),mother.begin(),(mother.end() -c));
+		child.insert(child.end(),father.begin() + c, father.end());
+		
+		std::sort(child.begin(),child.end());
+		auto last = std::unique(child.begin(),child.end());
+		child.erase(last,child.end());
+		
 		return child;
 
-	}*/
+	}
 
 
 	double fitnessFunction(std::vector<int> formula,std::vector<double> ancestor, double alpha)
@@ -106,31 +174,19 @@ public:
 		double fitness = 1;
 		double sum = 0;
 
-
 		for (int i = 0; i <formula.size(); i++)
 		{
-			sum += ancestor[formula[i]];
+			sum += (ancestor[formula[i]]);
 		}
-		
-
-		if (sum >= 0)
+		fitness = std::abs(sum - alpha);
+		if(fitness > 1)
 		{
-			fitness = std::abs(sum - alpha);
+			fitness = 1;
 		}
 
-		return fitness;
+		return (fitness);
 	}
 
-	/*std::vector<double> mutate(std::vector<double> member)
-	{
-		std::vector<double> current = member;
-		int c = rand() % 2;
-		int rIndex = rand() % current.size();
-
-		current[rIndex] = c;
-
-		return current;
-	}*/
 
 };
 
@@ -197,7 +253,7 @@ public:
 
 		Utils alg;
 
-		cuts = alg.GeneticAlgorithm(valueDist, alpha); //generate a sequence of cuts for an agent such that the fitness is equal to alpha 
+		cuts = alg.GeneticAlgorithm(valueDist, alpha, 0.01); //generate a sequence of cuts for an agent such that the fitness is equal to alpha 
 
 		return cuts;
 	}
@@ -250,7 +306,7 @@ public:
 
 
 
-
+		
 
 	}
 

@@ -13,6 +13,7 @@ int main()
 
 	p.cut_and_choose(a,b,0.5);
 
+
 	return 0;
 
 };
