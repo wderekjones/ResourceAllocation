@@ -11,6 +11,8 @@
 #include <random>
 #include <algorithm>
 
+#include <time.h>
+
 
 
 
@@ -146,6 +148,14 @@ public:
 
 		std::vector<int> child;
 
+		if(mother.size() == 0)
+		{
+			return child;
+		}
+		if(father.size() == 0)
+		{
+			return child;
+		}
 	
 		if (mother.size() > father.size())
 		{
@@ -159,6 +169,11 @@ public:
 		child.insert(child.end(),mother.begin(),(mother.end() -c));
 		child.insert(child.end(),father.begin() + c, father.end());
 		
+
+		/* the last 3 lines order the pieces in the resulting child 
+			and remove copies in order to ensure that each of the pieces
+			making up the child are distinct
+		*/
 		std::sort(child.begin(),child.end());
 		auto last = std::unique(child.begin(),child.end());
 		child.erase(last,child.end());
@@ -195,6 +210,8 @@ class Agent
 private:
 	std::vector<double> valueDist;
 	std::vector<int> cuts;
+	int shareSize;
+	double shareValue;
 public:
 
 	void generateValueDist(int rSize)
@@ -237,6 +254,37 @@ public:
 		return valueDist;
 	}
 
+	void set_cuts(std::vector<int> c)
+	{
+		cuts = c;
+	}
+
+	std::vector<int> get_cuts()
+	{
+		return cuts;
+	}
+
+	void set_shareSize(int s)
+	{
+		shareSize = s;
+	}
+
+	int get_shareSize()
+	{
+		return shareSize;
+	}
+
+	void set_shareValue(double v)
+	{
+		shareValue = v;
+	}
+
+	double get_shareValue()
+	{
+		return shareValue;
+	}
+
+
 	double eval(int S)
 	{
 		return valueDist[S];
@@ -253,7 +301,7 @@ public:
 
 		Utils alg;
 
-		cuts = alg.GeneticAlgorithm(valueDist, alpha, 0.01); //generate a sequence of cuts for an agent such that the fitness is equal to alpha 
+		cuts = alg.GeneticAlgorithm(valueDist, alpha, 0.5); //generate a sequence of cuts for an agent such that the fitness is equal to alpha 
 
 		return cuts;
 	}
@@ -265,18 +313,29 @@ class Protocol
 {
 
 public:
-	void cut_and_choose(Agent a, Agent b, double alpha)
+	void cut_and_choose(Agent* a, Agent* b, double alpha)
 	{
 		std::vector<int> cake;
 
-		cake.resize(a.get_value_dist().size());
+		cake.resize(a->get_value_dist().size());
 
-		std::vector<double> a_value = a.get_value_dist();
-		std::vector<double> b_value = b.get_value_dist();
+		std::vector<double> a_value = a->get_value_dist();
+		std::vector<double> b_value = b->get_value_dist();
 
 		std::vector<int> cuts;
 
-		cuts = a.cut(alpha); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
+
+		cuts = a->cut(alpha); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
+
+
+
+		std::sort(cuts.begin(),cuts.end());
+		auto last = std::unique(cuts.begin(),cuts.end());
+		cuts.erase(last,cuts.end());
+
+		std::vector<int> bcuts;
+
+
 
 		double asum = 0;
 		double bsum = 0;
@@ -285,23 +344,59 @@ public:
 		{
 			asum += a_value[cuts[i]];
 			bsum += b_value[cuts[i]];
-		}
 
-		std::cout<<"Player 1 values piece 1 as = "<<asum<<std::endl;
+		}
+		
+
+		bcuts.resize(b_value.size() - cuts.size());
+		//std::cout<<"size of player 2's share: "<<bcuts.size()<<std::endl;
+
+		
+		//std::cout<<"Player 1 values piece 1 as = "<<asum<<std::endl;
 
 		if( (1-bsum) > bsum)
 		{
-			std::cout<<"Player 2 chooses piece 2 , value = "<< (1-bsum)<<std::endl;
-			std::cout<<"Player 1 is left with piece 1, value = "<<(asum)<<std::endl; 
+			//std::cout<<"Player 2 chooses piece 2 , value = "<< (1-bsum)<<std::endl;
+			//std::cout<<"Player 1 is left with piece 1, value = "<<(asum)<<std::endl; 
+
+			a->set_shareValue(asum);
+			a->set_shareSize(cuts.size());
+
+			b->set_shareValue(1-bsum);
+			b->set_shareSize(bcuts.size());
+
 		}
 		else if( (1-bsum) < bsum)
 		{
-			std::cout<<"Player 2 chooses piece 1, value = "<<bsum<<std::endl;
-			std::cout<<"Player 1 is left with piece 2, value ="<<(1 - asum)<<std::endl;
+			//std::cout<<"Player 2 chooses piece 1, value = "<<bsum<<std::endl;
+			//std::cout<<"Player 1 is left with piece 2, value ="<<(1 - asum)<<std::endl;
+
+			a->set_shareValue(1-asum);
+			a->set_shareSize(bcuts.size());
+
+			b->set_shareValue(bsum);
+			b->set_shareSize(cuts.size());
 		}
 		else{
-			std::cout<<"Player 2 values each piece equally "<<bsum<<std::endl;
-			std::cout<<"Player 1 values piece 1 as "<<asum<<", and piece 2 as "<<(1-asum)<<std::endl;
+			//std::cout<<"Player 2 values each piece equally "<<bsum<<std::endl;
+			//std::cout<<"Player 1 values piece 1 as "<<asum<<", and piece 2 as "<<(1-asum)<<std::endl;
+
+			if( asum > (1-asum))
+			{
+				a->set_shareValue(asum);
+				a->set_shareSize(cuts.size());
+
+				b->set_shareValue(1-bsum);
+				b->set_shareSize(bcuts.size());
+			}
+			else if( asum < (1-asum))
+			{
+				a->set_shareValue((1-asum));
+				a->set_shareSize(bcuts.size());
+
+				b->set_shareValue(bsum);
+				b->set_shareSize(cuts.size());
+			}
 		}
 
 
