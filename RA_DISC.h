@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef RA_DISC
-#define RA_DISC
-
-
 #include <vector>
 #include <chrono>
 #include <cmath>
@@ -12,9 +8,6 @@
 #include <algorithm>
 
 #include <time.h>
-
-
-
 
 class Agent;
 
@@ -313,6 +306,17 @@ class Protocol
 {
 
 public:
+
+
+
+	void take_turn(Agent* p, double sValue, int sSize)
+	{
+		p->set_shareValue(sValue);
+		p->set_shareSize(sSize);
+
+	}
+
+
 	void cut_and_choose(Agent* a, Agent* b, double alpha)
 	{
 		std::vector<int> cake;
@@ -323,19 +327,16 @@ public:
 		std::vector<double> b_value = b->get_value_dist();
 
 		std::vector<int> cuts;
-
+		std::vector<int> bcuts;
 
 		cuts = a->cut(alpha); //find a set of pieces that sum up to equal alpha, here player 1 makes their cuts;
-
-
 
 		std::sort(cuts.begin(),cuts.end());
 		auto last = std::unique(cuts.begin(),cuts.end());
 		cuts.erase(last,cuts.end());
 
-		std::vector<int> bcuts;
-
-
+		bcuts.resize(b_value.size() - cuts.size());
+		
 
 		double asum = 0;
 		double bsum = 0;
@@ -346,72 +347,50 @@ public:
 			bsum += b_value[cuts[i]];
 
 		}
-		
-
-		bcuts.resize(b_value.size() - cuts.size());
-		//std::cout<<"size of player 2's share: "<<bcuts.size()<<std::endl;
 
 		
-		//std::cout<<"Player 1 values piece 1 as = "<<asum<<std::endl;
 
+		/*
+			Player 1 makes the cut, now Player 2 chooses
+		*/
 		if( (1-bsum) > bsum)
 		{
-			//std::cout<<"Player 2 chooses piece 2 , value = "<< (1-bsum)<<std::endl;
-			//std::cout<<"Player 1 is left with piece 1, value = "<<(asum)<<std::endl; 
-
-			a->set_shareValue(asum);
-			a->set_shareSize(cuts.size());
-
-			b->set_shareValue(1-bsum);
-			b->set_shareSize(bcuts.size());
-
+			/*
+				Player 2 has chosen piece 2, Player 1 is left with piece 1
+			*/ 
+			take_turn(a,asum,cuts.size());
+			take_turn(b,(1-bsum),bcuts.size());
 		}
 		else if( (1-bsum) < bsum)
 		{
-			//std::cout<<"Player 2 chooses piece 1, value = "<<bsum<<std::endl;
-			//std::cout<<"Player 1 is left with piece 2, value ="<<(1 - asum)<<std::endl;
-
-			a->set_shareValue(1-asum);
-			a->set_shareSize(bcuts.size());
-
-			b->set_shareValue(bsum);
-			b->set_shareSize(cuts.size());
+			/*
+				Player 2 has chosen piece 1, Player 2 is left with piece 2
+			*/
+			take_turn(a,(1-asum),bcuts.size());
+			take_turn(b,(bsum),cuts.size());
 		}
 		else{
-			//std::cout<<"Player 2 values each piece equally "<<bsum<<std::endl;
-			//std::cout<<"Player 1 values piece 1 as "<<asum<<", and piece 2 as "<<(1-asum)<<std::endl;
-
+			/*
+				Player 2 values piece 1 and piece 2 equally, so due to indecisiveness of Player 2, Player 1 
+				must make the decision
+			*/
 			if( asum > (1-asum))
 			{
-				a->set_shareValue(asum);
-				a->set_shareSize(cuts.size());
-
-				b->set_shareValue(1-bsum);
-				b->set_shareSize(bcuts.size());
+				take_turn(a,asum,cuts.size());
+				take_turn(b,(1-bsum),bcuts.size());
 			}
 			else if( asum < (1-asum))
 			{
-				a->set_shareValue((1-asum));
-				a->set_shareSize(bcuts.size());
-
-				b->set_shareValue(bsum);
-				b->set_shareSize(cuts.size());
+				take_turn(a,(1-asum),bcuts.size());
+				take_turn(b,bsum,cuts.size());
 			}
 		}
+	}
 
 
-
-		
+	void last_diminisher(std::vector<Agent*> players)
+	{
 
 	}
 
 };
-
-
-
-
-
-
-
-
-#endif
