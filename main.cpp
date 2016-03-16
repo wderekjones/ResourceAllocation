@@ -15,14 +15,28 @@ int main()
 	std::vector<double> p2_shareSize;
 	std::vector<int> rSizes;
 
-	std::cout<<"Number of Trials: ";
+	//std::cout<<"Number of Trials: ";
 	int trial_num = 0;
-	std::cin>>trial_num;
+	//std::cin>>trial_num;
 
 	double alpha = 0.5;
 
-	int resource_size = 2;
+	int resource_size = 20;
 
+	Agent* a = new Agent;
+	Agent* b = new Agent;
+
+	a->generateValueDist(resource_size);
+	b->generateValueDist(resource_size);
+
+	std::vector<Agent*> players;
+	players.push_back(a);
+	players.push_back(b);
+	Protocol p;
+
+	p.last_diminisher(players);
+
+	/*
 	for(int i = 0 ; i < trial_num; i ++)
 	{
 
@@ -66,6 +80,9 @@ int main()
 	output_file << std::endl;
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
 	output_file <<std::endl;
+
+	*/
+
 
 	return 0;
 

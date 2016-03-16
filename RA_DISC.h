@@ -390,6 +390,24 @@ public:
 
 	void last_diminisher(std::vector<Agent*> players)
 	{
+		std::vector<int> markings;
+
+		int num_sessions = players.size();
+
+		for(int i = 0 ; i < num_sessions; i++)
+		{
+			std::vector<int> c;
+			double alpha = double(1.0/num_sessions);
+			c = players[i]->cut(alpha);
+			std::cout<<alpha<<std::endl;
+			for(int j = 0 ; j < c.size(); j++)
+			{
+				std::cout<<c[j]<<" "; 
+			}
+			std::cout<<std::endl;
+
+		}
+
 
 	}
 
