@@ -15,9 +15,9 @@ int main()
 	std::vector<double> p2_shareSize;
 	std::vector<int> rSizes;
 
-	//std::cout<<"Number of Trials: ";
+	std::cout<<"Number of Trials: ";
 	int trial_num = 0;
-	//std::cin>>trial_num;
+	std::cin>>trial_num;
 
 	double alpha = 0.5;
 
@@ -34,9 +34,9 @@ int main()
 	players.push_back(b);
 	Protocol p;
 
-	p.last_diminisher(players);
+	//p.last_diminisher(players);
 
-	/*
+	
 	for(int i = 0 ; i < trial_num; i ++)
 	{
 
@@ -81,7 +81,7 @@ int main()
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
 	output_file <<std::endl;
 
-	*/
+	
 
 
 	return 0;

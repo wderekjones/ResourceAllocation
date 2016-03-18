@@ -39,8 +39,8 @@ public:
 				p1 = rand() % population.size();
 				p2 = rand() % population.size();
 
-				std::vector<int> mother = random_selection(population); //randomly select a member of the population
-				std::vector<int> father = random_selection(population); 
+				std::vector<int> mother = random_selection(population,ancestor,fitness); //randomly select a member of the population
+				std::vector<int> father = random_selection(population,ancestor,fitness); 
 				std::vector<int> child = reproduce(mother,father,ancestor);
 
 				// randomly determine whether or not to mutate the child
@@ -96,26 +96,57 @@ public:
 			apopulation.push_back(iVec);
 		}
 
-		std::sort(apopulation.begin(),apopulation.end());
-		auto last = std::unique(apopulation.begin(),apopulation.end());
-		apopulation.erase(last,apopulation.end());
-
 		return apopulation;
 
 	}
 
 
-	std::vector<int> random_selection(std::vector<std::vector<int>> population)
+	std::vector<int> random_selection(std::vector<std::vector<int>> population, std::vector<double> ancestor, double alpha)
 	{
 
 		std::vector<int> neo;
+
+		std::vector<double> pop_fitness;
+
+		double fit_sum = 0.0;
+
+		for(int i = 0 ; i < population.size(); i++)
+		{
+			pop_fitness.push_back(fitnessFunction(population[i],ancestor,alpha));
+			fit_sum+=pop_fitness[i];
+		}
+
+		std::vector<double> prop_pop_fitness;
+
+		for (int i = 0; i < pop_fitness.size(); ++i)
+		{
+			prop_pop_fitness.push_back(pop_fitness[i]/fit_sum);
+		}
 
 		int selectedI = 0;
 
 		selectedI = rand() % population.size();
 
-		neo = population[selectedI];
+		double cutoff = 0;
 
+		cutoff = prop_pop_fitness[selectedI];
+
+		int tries = 0;
+		while(tries < 1000)
+		{
+			selectedI = rand() % population.size();
+
+			if(prop_pop_fitness[selectedI] >= cutoff)
+			{
+				neo = population[selectedI];
+				return neo;
+			}
+
+			tries++;
+		}
+
+		selectedI = 0;
+		neo = population[selectedI];
 		return neo;
 
 	}
@@ -162,14 +193,6 @@ public:
 		child.insert(child.end(),mother.begin(),(mother.end() -c));
 		child.insert(child.end(),father.begin() + c, father.end());
 		
-
-		/* the last 3 lines order the pieces in the resulting child 
-			and remove copies in order to ensure that each of the pieces
-			making up the child are distinct
-		*/
-		std::sort(child.begin(),child.end());
-		auto last = std::unique(child.begin(),child.end());
-		child.erase(last,child.end());
 		
 		return child;
 
