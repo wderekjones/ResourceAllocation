@@ -15,29 +15,46 @@ int main()
 	std::vector<double> p2_shareSize;
 	std::vector<int> rSizes;
 
-	std::cout<<"Number of Trials: ";
+	/*std::cout<<"Number of Trials: ";
 	int trial_num = 0;
 	std::cin>>trial_num;
+	*/
 
 	double alpha = 0.5;
 
-	int resource_size = 20;
+	int resource_size = 200;
 
 	Agent* a = new Agent;
 	Agent* b = new Agent;
+	Agent* c = new Agent;
+	Agent* d = new Agent;
+	Agent* e = new Agent;
 
 	a->generateValueDist(resource_size);
 	b->generateValueDist(resource_size);
+	c->generateValueDist(resource_size);
+	d->generateValueDist(resource_size);
+	e->generateValueDist(resource_size);
 
 	std::vector<Agent*> players;
 	players.push_back(a);
 	players.push_back(b);
+	players.push_back(c);
+	players.push_back(d);
+	players.push_back(e);
 	Protocol p;
 
-	//p.last_diminisher(players);
+	p.last_diminisher(players);
+
+	for (int i = 0; i < players.size(); ++i)
+	{
+		/* code */
+		//std::cout<<players[i]->get_shareSize()<<" ";
+	}
+	std::cout<<std::endl;
 
 	
-	for(int i = 0 ; i < trial_num; i ++)
+	/*for(int i = 0 ; i < trial_num; i ++)
 	{
 
 		resource_size = pow(2,i);
@@ -80,7 +97,7 @@ int main()
 	output_file << std::endl;
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
 	output_file <<std::endl;
-
+	*/
 	
 
 

@@ -301,10 +301,33 @@ public:
 	}
 
 
-	double eval(int S)
+	double eval_piece(int S)
 	{
 		return valueDist[S];
 	};
+
+	double eval_share(std::vector<int> S)
+	{
+		double sum = 0;
+
+		if(S.size() == 1 )
+		{
+			sum = eval_piece(S[0]);
+		}
+		else if (S.size() == 0)
+		{
+			sum = 0;
+		}
+		else
+		{
+			for(int i = 0; i < S.size(); i ++)
+			{
+				sum += valueDist[S[i]];
+			}
+		}
+
+		return sum;
+	}
 
 	std::vector<int> cut(double alpha)
 	{
@@ -321,6 +344,47 @@ public:
 
 		return cuts;
 	}
+
+	std::vector<int> diminish_cut(std::vector<int> C, double alpha, double epsilon)
+	{
+		//double min_dim_fitness = Agent::eval_piece(copy_C[0]);
+		//std::cout<<min_dim_fitness<<std::endl; 
+
+		if(C.size() > 1 )
+		{
+			std::sort(C.begin(), C.end());
+			if(Agent::eval_share(C) > alpha)
+			{
+				//std::cout<<"The player values the piece as "<<Agent::eval_share(copy_C)<<", which is more than alpha = "<<alpha<<std::endl;
+				double diminshed_value = 0;
+				diminshed_value = Agent::eval_share(C);
+		
+				int i = 0;
+			}
+
+				while(i < C.size() && !C.empty())
+				{
+
+					C.erase(C.begin(), C.begin() + 1);
+					diminshed_value = Agent::eval_share(C);
+					std::cout<<"Value after "<< (i+1)<<" cuts = "<<Agent::eval_share(C)<<std::endl;
+					if(std::abs(diminshed_value - alpha) <= epsilon)
+					{
+						return C;
+					}
+					i++;
+				}
+			}
+		}
+		else
+		{
+			//std::cout<<"The player values this piece as = "<<Agent::eval_share(C)<<", less than or equal to alpha = "<<alpha<<std::endl;
+			return C;
+		}
+
+
+
+		//return C;
 
 };
 
@@ -402,7 +466,7 @@ public:
 				take_turn(a,asum,cuts.size());
 				take_turn(b,(1-bsum),bcuts.size());
 			}
-			else if( asum < (1-asum))
+			else if( asum <= (1-asum))
 			{
 				take_turn(a,(1-asum),bcuts.size());
 				take_turn(b,bsum,cuts.size());
@@ -413,25 +477,126 @@ public:
 
 	void last_diminisher(std::vector<Agent*> players)
 	{
-		std::vector<int> markings;
+		std::vector<int> cake;
 
-		int num_sessions = players.size();
-
-		for(int i = 0 ; i < num_sessions; i++)
+		for (int i = 0; i < players[0]->get_value_dist().size(); i++)
 		{
-			std::vector<int> c;
-			double alpha = double(1.0/num_sessions);
-			c = players[i]->cut(alpha);
-			std::cout<<alpha<<std::endl;
-			for(int j = 0 ; j < c.size(); j++)
-			{
-				std::cout<<c[j]<<" "; 
-			}
-			std::cout<<std::endl;
+			cake.push_back(i);
+		}
 
+		int session_n = 0;
+		double alpha = double(1.0/players.size());
+
+		std::vector<int> cuts;
+		//cuts = players[0]->cut(alpha);
+
+		std::cout<<"initial cake.size() = "<<cake.size()<<std::endl;
+
+		while(players.size() > 2)
+		{
+
+			// player 1 makes a cut that they feel has a value of 1 / n
+			cuts = players[0] ->cut(alpha);
+
+			//if n = 1 other players, then apply cut and choose protocol
+			if(players.size() == 2)
+			{
+					cut_and_choose(players[0],players[1],0.5);
+					players.pop_back();
+					players.pop_back();
+			}
+			//else if n > 1 other players, then:
+			else
+			{
+				// for each remaining player j (not the player at the front of the line) 
+				for(int j = 1; j <players.size(); j ++ )
+				{
+
+					// evaluate the cut for round i, which is then passes to the next remaining player j + 1, until
+					// there are no other players left to pass to. The player[j] with the cut at the end of the line
+					// takes their share and drops out
+
+					std::cout<<"player ["<<j<<"]: "<<players[j]->eval_share(cuts)<<std::endl;
+				}
+			}
 		}
 
 
-	}
 
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			/*std::sort(cuts.begin(),cuts.end());
+			auto last = std::unique(cuts.begin(),cuts.end());
+			cuts.erase(last,cuts.end());
+
+			std::cout<<"cuts["<<session_n<<"].size() = "<<cuts.size()<<std::endl;;
+			
+
+			for(int i = 0; i < players.size() - 1; i++)
+			{
+				std::vector<int> new_cuts;
+				if( i > 0 && (i < players.size() - 2))
+				{
+					std::cout<<"player "<<i<<" values player"<<(i-1)<<"'s cut = "<<players[i]->eval_share(cuts)<<std::endl;
+					new_cuts = players[i]->diminish_cut(cuts,alpha,0.05);
+					cuts = new_cuts;
+				}
+
+			}
+
+			if(players.size() == 2){
+				std::cout<<"2 players remain, Now executing Cut and Choose Protocol: "<<std::endl;;
+				cut_and_choose(players[0],players[1], alpha);
+				std::cout<<"Player "<<0<<" share value: "<<players[0]->get_shareValue()<<"       ";
+				std::cout<<"Player "<<1<<" share value: "<<players[1]->get_shareValue()<<std::endl;
+				std::cout<<"Player "<<0<<" shareSize:   "<<((double)players[0]->get_shareSize()/players[0]->get_value_dist().size())<<"        ";
+				std::cout<<"Player "<<1<<" shareSize    "<<(double)players[1]->get_shareSize()/players[1]->get_value_dist().size()<<std::endl;
+				players.pop_back();
+				players.pop_back();
+				exit(1);
+				
+			}
+
+			//int last_p_i = players.back();
+
+			take_turn(players.back(),cuts.size(),players.back()->eval_share(cuts));
+			players.pop_back();
+
+			for (int i = 0; i < cuts.size(); ++i)
+			{
+				for(int j = 0; j < cake.size(); ++j)
+				{
+				
+					if(cuts[i] == cake[j])
+					{
+						cake.erase(cake.begin(),cake.begin()+j);
+					}
+				}
+				std::cout<<std::endl;
+			}
+		
+			n++;*/
+
+}
