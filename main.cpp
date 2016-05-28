@@ -15,26 +15,28 @@ int main()
 	std::vector<double> p2_shareSize;
 	std::vector<int> rSizes;
 
-	/*std::cout<<"Number of Trials: ";
-	int trial_num = 0;
-	std::cin>>trial_num;
-	*/
+	//std::cout<<"Number of Trials: ";
+	int trial_num = 4;
+	//std::cin>>trial_num;
+
 
 	double alpha = 0.5;
 
-	int resource_size = 200;
+	int resource_size = 16;
 
 	Agent* a = new Agent;
 	Agent* b = new Agent;
 	Agent* c = new Agent;
 	Agent* d = new Agent;
 	Agent* e = new Agent;
+	Agent* f = new Agent;
 
 	a->generateValueDist(resource_size);
 	b->generateValueDist(resource_size);
 	c->generateValueDist(resource_size);
 	d->generateValueDist(resource_size);
 	e->generateValueDist(resource_size);
+	f->generateValueDist(resource_size);
 
 	std::vector<Agent*> players;
 	players.push_back(a);
@@ -42,29 +44,24 @@ int main()
 	players.push_back(c);
 	players.push_back(d);
 	players.push_back(e);
+	players.push_back(f);
+
 	Protocol p;
 
 	p.last_diminisher(players);
 
-	for (int i = 0; i < players.size(); ++i)
-	{
-		/* code */
-		//std::cout<<players[i]->get_shareSize()<<" ";
-	}
-	std::cout<<std::endl;
 
-	
 	/*for(int i = 0 ; i < trial_num; i ++)
 	{
 
 		resource_size = pow(2,i);
-		
+
 		Agent* a = new Agent;
 		a->generateValueDist(resource_size);
-	
+
 		Agent* b = new Agent;
 		b->generateValueDist(resource_size);
-	
+
 		Protocol p;
 
 		clock_t t;
@@ -82,9 +79,9 @@ int main()
 		p2_shareSize.push_back(b->get_shareSize()/(double(resource_size)));
 		rSizes.push_back(resource_size);
 	}
-	
+
 	std::ofstream output_file("output.txt");
-	
+
 	std::copy(time_table.begin(), time_table.end(), std::ostream_iterator<float>(output_file, ","));
 	output_file << std::endl;
 	std::copy(p1_vals.begin(), p1_vals.end(), std::ostream_iterator<double>(output_file, ","));
@@ -96,9 +93,9 @@ int main()
 	std::copy(p2_shareSize.begin(), p2_shareSize.end(), std::ostream_iterator<double>(output_file, ","));
 	output_file << std::endl;
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
-	output_file <<std::endl;
-	*/
-	
+	output_file <<std::endl;*/
+
+
 
 
 	return 0;
