@@ -22,70 +22,65 @@ int main()
 
 	double alpha = 0.5;
 
-	int resource_size = 10;
+	int resource_size = 16;
 
 	Agent* a = new Agent;
 	Agent* b = new Agent;
 	Agent* c = new Agent;
 	Agent* d = new Agent;
-	//Agent* e = new Agent;
-	//Agent* f = new Agent;
+	Agent* e = new Agent;
+	Agent* f = new Agent;
 
 	a->generateValueDist(resource_size);
 	b->generateValueDist(resource_size);
 	c->generateValueDist(resource_size);
 	d->generateValueDist(resource_size);
-	//e->generateValueDist(resource_size);
-	//f->generateValueDist(resource_size);
+	e->generateValueDist(resource_size);
+	f->generateValueDist(resource_size);
 
 	std::vector<Agent*> players;
 	players.push_back(a);
 	players.push_back(b);
 	players.push_back(c);
 	players.push_back(d);
-	//players.push_back(e);
-	//players.push_back(f);
+	players.push_back(e);
+	players.push_back(f);
 
 	Protocol p;
 
-
-	p.cut_and_choose(a,b,0.5);
-
-
-
-	//p.last_diminisher(players);
+	p.last_diminisher(players);
 
 
 	/*for(int i = 0 ; i < trial_num; i ++)
 	{
 
-		resource_size = pow(2,i);
+	resource_size = pow(2,i);
 
-		Agent* a = new Agent;
-		a->generateValueDist(resource_size);
+	Agent* a = new Agent;
+	a->generateValueDist(resource_size);
 
-		Agent* b = new Agent;
-		b->generateValueDist(resource_size);
+	Agent* b = new Agent;
+	b->generateValueDist(resource_size);
 
-		Protocol p;
+	Protocol p;
 
-		clock_t t;
+	clock_t t;
 
-		t= clock();
+	t= clock();
 
-		p.cut_and_choose(a,b,alpha);
+	p.cut_and_choose(a,b,alpha);
 
-		t = (clock() - t);
+	t = (clock() - t);
 
-		time_table.push_back((float)t/CLOCKS_PER_SEC);
-		p1_vals.push_back(a->get_shareValue());
-		p2_vals.push_back(b->get_shareValue());
-		p1_shareSize.push_back(a->get_shareSize()/(double(resource_size)));
-		p2_shareSize.push_back(b->get_shareSize()/(double(resource_size)));
-		rSizes.push_back(resource_size);
-	}*/
+	time_table.push_back((float)t/CLOCKS_PER_SEC);
+	p1_vals.push_back(a->get_shareValue());
+	p2_vals.push_back(b->get_shareValue());
+	p1_shareSize.push_back(a->get_shareSize()/(double(resource_size)));
+	p2_shareSize.push_back(b->get_shareSize()/(double(resource_size)));
+	rSizes.push_back(resource_size);
+	}
 
-	/*std::ofstream output_file("output.txt");
+	std::ofstream output_file("output.txt");
 
 	std::copy(time_table.begin(), time_table.end(), std::ostream_iterator<float>(output_file, ","));
 	output_file << std::endl;
@@ -100,7 +95,7 @@ int main()
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
 	output_file <<std::endl;*/
 
-
+	system("pause");
 
 
 	return 0;
