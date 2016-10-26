@@ -56,7 +56,7 @@ int main()
 	//p.last_diminisher(players);
 
 
-	/*for(int i = 0 ; i < trial_num; i ++)
+	for(int i = 0 ; i < trial_num; i ++)
 	{
 
 		resource_size = pow(2,i);
@@ -83,9 +83,9 @@ int main()
 		p1_shareSize.push_back(a->get_shareSize()/(double(resource_size)));
 		p2_shareSize.push_back(b->get_shareSize()/(double(resource_size)));
 		rSizes.push_back(resource_size);
-	}*/
+	}
 
-	/*std::ofstream output_file("output.txt");
+	std::ofstream output_file("output.txt");
 
 	std::copy(time_table.begin(), time_table.end(), std::ostream_iterator<float>(output_file, ","));
 	output_file << std::endl;
@@ -98,7 +98,7 @@ int main()
 	std::copy(p2_shareSize.begin(), p2_shareSize.end(), std::ostream_iterator<double>(output_file, ","));
 	output_file << std::endl;
 	std::copy(rSizes.begin(), rSizes.end(), std::ostream_iterator<int>(output_file, ","));
-	output_file <<std::endl;*/
+	output_file <<std::endl;
 
 
 
